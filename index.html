@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <style>
+            .left-column{
+                border:1px solid black;
+                min-width:25%;
+                min-height:100%;
+                width:25%;
+                height:100%;
+            }
+            .chat-space{
+                min-width:70%;
+                min-height:100%;
+                width:70%;
+                height:100%;
+            }
+            .form-control{
+                min-width:75%;
+                width:75%;
+                margin:15px;
+            }
+            #send{
+                margin-left:15px;
+            }
+            #message{
+                height:75px;
+            }
+        </style>
+        <script src="C:\Users\buric\OneDrive\Documents\GitHub\DIY-IRC\node_modules\socket.io\lib\socket.js">
+            var socket = io();
+            socket.on('message', addMessages)
+        </script>
+        <script>
+            var userNickName = prompt("Enter a nickname: ", "Name");
+            
+        </script>
+    </head>
+    <body style="height:95vh; width:100vw; display:flex; flex-wrap:wrap;">
+        <div class="left-column">
+        </div>
+        <div class="chat-space">
+            <p id="name" style="display:none;"></p>
+            <script>
+                document.getElementById("name").innerHTML = userNickName;
+            </script>
+            <div id="messages" style="min-height:90%; height:90%;">
+             
+            </div>
+            <textarea id="message" class="form-control"></textarea>
+             <br>
+             <button id="send" class="btn btn-success">Send</button>
+        </div>
+             
+        </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js">
+            $(() => {
+                $("#send").click(()=>{
+                sendMessage({
+                    name: $("#name").innerHTML(), 
+                    message:$("#message").val()});
+                    });
+                getMessages();
+            })
+    
+            function addMessages(message){
+            $("#messages").append(`
+                <h4> ${message.name} </h4>
+                <p>  ${message.message} </p>`)
+            }
+   
+            function getMessages(){
+                $.get("http://localhost:7777/messages", (data) => {
+                data.forEach(addMessages);
+            })
+            }
+ 
+            function sendMessage(message){
+                $.post("http://localhost:7777/messages", message)
+            }
+        </script>
+    </body>
+</html>
