@@ -1,56 +1,79 @@
 <html>
 <head>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
 
-</head>
-<body>
   <script>
     var username = prompt("Enter a nickname: ", "Nickname here");
   </script>
+
   <script>
-    var el = document.getElementById("messages");
-    el.scrollTop = element.scrollHeight;
+      document.onload(function(){
+        var e = document.getElementById("messages");
+        e.scrollTop = e.scrollHeight;
+      })
   </script>
+</head>
+
+<body style="background-color:lightgray;">
 <div class="container" style="width:80vw; height:80vh; max-height:80vh;">
     <br>
-    <div id="messages" style="max-height:80vh; overflow-y:scroll;">
+    <div id="messages" style="max-height:70vh; min-height:70vh; overflow-y:scroll;">
 
     </div>
     <br>
         <br>
-        <textarea id = "message" class="form-control" placeholder="Your Message Here"></textarea>
+        <div style="display:flex; flex-wrap:nowrap;">
+        <textarea id = "message" style="width:75%; margin-right:15px; margin-left:15px;" class="form-control" placeholder="Your Message Here"></textarea>
         <br>
-        <button id="send">Send</button>
-    
+        <button id="send" style="border-radius:15px; width:20%;">Send</button>
+        </div>
 </div>
 <script>
-
-   var socket = io();
+    var current = new Date();
+    var date = current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate();
+    var time = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
+    var socket = io();
+    
+    $(function() {
+        $("#message").keypress(function (e) {
+            if(e.which == 13) {
+                send({name: username, message: $("#message").val(), time: time, date: date});
+                $(this).val("");
+                var el = document.getElementById("messages");
+                el.scrollTop = el.scrollHeight;
+                e.preventDefault();
+            }
+            
+        });
+    });
+    
     $(() => {
         $("#send").click(()=>{
-            sendMessage({name: username, message: $("#message").val()});
+            send({name: username, message: $("#message").val(), time: time, date: date});
+            var el = document.getElementById("messages");
+            el.scrollTop = el.scrollHeight;
+            $(this).val("");
         })
-
-        getMessages()
+        get()
+        
     })
 
-    socket.on('message', addMessages)
+    socket.on('message', add)
 
-    function addMessages(message){
-        $("#messages").append(`<h5> ${message.name}</h5> <p> ${message.message} </p>`)
+    function add(message){
+        $("#messages").append(`<h5 style='border-top:1px solid black;'> ${message.name} <p style='font-color:gray; font-size:12px;'>at ${message.time} on ${message.date}</p></h5> <p> ${message.message} </p>`)
     }
 
-    function getMessages(){
+    function get(){
       $.get('http://localhost:7777/msg', (data) => {
-        data.forEach(addMessages);
+        data.forEach(add);
       })
     }
 
-    function sendMessage(message){
+    function send(message){
       $.post('http://localhost:7777/msg', message)
     }
 </script>

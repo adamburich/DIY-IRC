@@ -11,7 +11,9 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 var Message = mongoose.model('Message',{
   name : String,
-  message : String
+  message : String,
+  time: String,
+  date: String
 })
 
 var database_url = 'mongodb+srv://user:Password@cluster0.ybmx2.mongodb.net/mini-irc?retryWrites=true&w=majority'
