@@ -33,7 +33,7 @@
 </div>
 <script>
     var current = new Date();
-    var date = current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate();
+    var date = current.getFullYear()+"-"+(current.getMonth()+1)+"-"+current.getDate();
     var time = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
     var socket = io();
     
@@ -61,20 +61,20 @@
         
     })
 
-    socket.on('message', add)
+    socket.on("message", add)
 
     function add(message){
-        $("#messages").append(`<h5 style='border-top:1px solid black;'> ${message.name} <p style='font-color:gray; font-size:12px;'>at ${message.time} on ${message.date}</p></h5> <p> ${message.message} </p>`)
+        $("#messages").append(`<h5 style="border-top:1px solid black;"> ${message.name} <p style="font-color:gray; font-size:12px;">at ${message.time} on ${message.date}</p></h5> <p> ${message.message} </p>`)
     }
 
     function get(){
-      $.get('http://localhost:7777/msg', (data) => {
+      $.get("http://localhost:7777/msg", (data) => {
         data.forEach(add);
       })
     }
 
     function send(message){
-      $.post('http://localhost:7777/msg', message)
+      $.post("http://localhost:7777/msg", message)
     }
 </script>
 </body>
